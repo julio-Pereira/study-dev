@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>com.julio</groupId>
 	<artifactId>orange-bank</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>24.1.0</version>
 	<name>orange-bank</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Orange Bank App</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -28,6 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+		<junit.version>5.11.2</junit.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -40,6 +41,14 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
