@@ -1,6 +1,7 @@
 # desafio-orange-bank-backend
 
-# Orange Bank - Desafio de Programação
+# Orange Bank 
+- Desafio de Programação
 
 Este é um desafio bacana tanto de desenvolvimento de software quanto de engenharia de software. Queremos testar sua capacidade de construir um software com várias partes diferentes funcionando em conjunto!
 
@@ -29,7 +30,7 @@ Seu projeto:
 - Todos os commits **DEVEM** ser feitos pelo mesmo usuário que criou o projeto
     - Entendemos que algumas pessoas tem usuários pessoais e profissionais, ou um usuário diferente usado para estudar. Atenção com isso se você for uma dessas pessoas!
 - **DEVE** seguir exatamente os _endpoints_ descritos a seguir
-    - Por exemplo, `/transacao` não é a mesma coisa que `/transacoes`
+    - Por exemplo, `/transacaoDto` não é a mesma coisa que `/transacoes`
 - **DEVE** aceitar e responder com objetos exatamente como descritos a seguir
     - Por exemplo, `dataHora` não é a mesma coisa que `data-hora` ou `dtTransacao`
 - **NÃO DEVE** utilizar quaisquer sistemas de banco de dados (como H2, MySQL, PostgreSQL, ...) ou cache (como Redis, Memcached, Infinispan, ...)
@@ -42,7 +43,7 @@ Seu projeto:
 
 A seguir serão especificados os endpoints que devem estar presentes na sua API e a funcionalidade esperada de cada um deles.
 
-#### 2.2.1. Receber Transações: `POST /transacao`
+#### 2.2.1. Receber Transações: `POST /transacaoDto`
 
 Este é o endpoint que irá receber as Transações. Cada transação consiste de um `valor` e uma `dataHora` de quando ela aconteceu:
 
@@ -79,7 +80,7 @@ Como resposta, espera-se que este endpoint responda com:
 - `400 Bad Request` sem nenhum corpo
     - A API não compreendeu a requisição do cliente (por exemplo: um JSON inválido)
 
-#### 2.2.2. Limpar Transações: `DELETE /transacao`
+#### 2.2.2. Limpar Transações: `DELETE /transacaoDto`
 
 Este endpoint simplesmente **apaga todos os dados de transações** que estejam armazenados.
 

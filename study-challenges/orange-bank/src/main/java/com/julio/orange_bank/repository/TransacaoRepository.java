@@ -1,21 +1,28 @@
 package com.julio.orange_bank.repository;
 
-import com.julio.orange_bank.records.Transacao;
+import com.julio.orange_bank.model.Transacao;
 import org.springframework.stereotype.Repository;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class TransacaoRepository {
 
+    List<Transacao> transacoesList = new ArrayList<>();
+
+    public Transacao addTransacao(Transacao transacao) {
+        transacoesList.add(transacao);
+        return transacao;
+    }
+
+    public List<Transacao> deleteTransacoes() {
+        transacoesList.clear();
+        return transacoesList;
+    }
 
 
     public List<Transacao> getTransacoes() {
-        List<Transacao> transacoesList = new ArrayList<>();
-        transacoesList.add(new Transacao("199,99", OffsetDateTime.now()));
-
         return transacoesList;
     }
 }
