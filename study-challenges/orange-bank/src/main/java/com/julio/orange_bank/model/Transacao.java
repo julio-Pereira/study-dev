@@ -1,10 +1,7 @@
 package com.julio.orange_bank.model;
 
-
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.OffsetDateTime;
 
 public class Transacao implements Serializable {
