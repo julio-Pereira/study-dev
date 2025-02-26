@@ -1,0 +1,9 @@
+spring:
+  app:
+    name: rate-limiting
+    rate:
+      limit: 5
+      duration: 60000
+
+server:
+  port: 8080
