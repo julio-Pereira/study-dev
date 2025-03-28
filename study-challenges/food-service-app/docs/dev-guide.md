@@ -9,7 +9,7 @@ All developers need to have the following tools installed:
 - **Git** (v2.30.0 or higher)
 - **Docker** (v20.10.0 or higher)
 - **Docker Compose** (v2.5.0 or higher)
-- **Java Development Kit (JDK)** (v17 or higher)
+- **Java Development Kit (JDK)** (v21 or higher)
 - **Node.js** (v18.0.0 or higher)
 - **npm** (v9.0.0 or higher)
 - **Maven** (v3.8.0 or higher)
