@@ -1,4 +1,4 @@
-package org.study.design.patterns;
+package com.fsms;
 
 public class Main {
     public static void main(String[] args) {

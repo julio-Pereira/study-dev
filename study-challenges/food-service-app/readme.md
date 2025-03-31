@@ -31,7 +31,7 @@ food-service-app/
 ### Prerequisites
 
 - Docker and Docker Compose
-- Java 17+
+- Java 21+
 - Node.js 18+
 - npm 9+
 - Maven 3.8+
@@ -40,8 +40,8 @@ food-service-app/
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-organization/food-service-app.git
-cd food-service-app
+git clone https://github.com/julio-Pereira/study-dev.git
+cd study-challenges/food-service-app
 ```
 
 2. Start the development environment:
