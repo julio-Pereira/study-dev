@@ -1,0 +1,152 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: fsms-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-fsms_db}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres-dev-data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - fsms-dev-network
+
+  # MongoDB
+  mongodb:
+    image: mongo:6.0
+    container_name: fsms-mongodb-dev
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-mongodb}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-mongodb}
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    volumes:
+      - mongodb-dev-data:/data/db
+    networks:
+      - fsms-dev-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: fsms-redis-dev
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD:-redis_password}
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    networks:
+      - fsms-dev-network
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: fsms-rabbitmq-dev
+    restart: unless-stopped
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-rabbit}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-rabbit}
+    networks:
+      - fsms-dev-network
+
+  # Adminer - Database management
+  adminer:
+    image: adminer:latest
+    container_name: fsms-adminer-dev
+    restart: unless-stopped
+    ports:
+      - "${ADMINER_PORT:-8081}:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    depends_on:
+      - postgres
+    networks:
+      - fsms-dev-network
+
+  # Mock payment service for development
+  mock-payment:
+    image: mockoon/cli:latest
+    container_name: fsms-mock-payment
+    command: ["--data", "/data/payment-mock.json", "--port", "${MOCK_PAYMENT_PORT:-8082}"]
+    volumes:
+      - ./mock-services:/data
+    ports:
+      - "${MOCK_PAYMENT_PORT:-8082}:8082"
+    networks:
+      - fsms-dev-network
+
+  # Backend API services for development
+  api-dev:
+    build:
+      context: ./fs-services
+      dockerfile: Dockerfile.dev
+    container_name: fsms-api-dev
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-8080}:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_HOST:-postgres}:${DB_PORT:-5432}/${DB_NAME:-fsms_db}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-postgres}
+      SPRING_DATA_MONGODB_URI: mongodb://${MONGO_USER:-mongodb}:${MONGO_PASSWORD:-mongodb}@${MONGO_HOST:-mongodb}:${MONGO_PORT:-27017}/${MONGO_DB:-fsms}
+      SPRING_REDIS_HOST: ${REDIS_HOST:-redis}
+      SPRING_REDIS_PORT: ${REDIS_PORT:-6379}
+      SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_password}
+      SPRING_RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
+      SPRING_RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER:-rabbit}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-rabbit}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_key}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+      PAYMENT_SERVICE_URL: http://${MOCK_PAYMENT_HOST:-mock-payment}:${MOCK_PAYMENT_PORT:-8082}
+    volumes:
+      - ./fs-services:/app
+      - maven-repo:/root/.m2
+    depends_on:
+      - postgres
+      - mongodb
+      - redis
+      - rabbitmq
+      - mock-payment
+    networks:
+      - fsms-dev-network
+
+  # Frontend development
+  ui-dev:
+    build:
+      context: ./fs-user-interface
+      dockerfile: Dockerfile.dev
+    container_name: fsms-ui-dev
+    restart: unless-stopped
+    ports:
+      - "${UI_PORT:-3000}:3000"
+    environment:
+      REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:8080/api}
+      REACT_APP_ENV: development
+      CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-true}
+    volumes:
+      - ./fs-user-interface:/app
+      - /app/node_modules
+    depends_on:
+      - api-dev
+    networks:
+      - fsms-dev-network
+
+volumes:
+  postgres-dev-data:
+  mongodb-dev-data:
+  maven-repo:
+
+networks:
+  fsms-dev-network:
+    driver: bridge
