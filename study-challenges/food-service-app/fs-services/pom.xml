@@ -19,19 +19,12 @@
     <description>Microservices for Food Service Management System</description>
 
     <modules>
-        <!-- Add service modules here as they are created -->
-        <!-- <module>auth-service</module> -->
-        <!-- <module>order-service</module> -->
-        <!-- <module>inventory-service</module> -->
-        <!-- <module>payment-service</module> -->
-        <!-- <module>analytics-service</module> -->
-        <!-- <module>notification-service</module> -->
         <module>auth-service</module>
-        <module>payment-service</module>
         <module>order-service</module>
-        <module>notification-service</module>
         <module>inventory-service</module>
+        <module>payment-service</module>
         <module>analytics-service</module>
+        <module>notification-service</module>
     </modules>
 
     <properties>
