@@ -60,17 +60,13 @@ For detailed setup instructions, see [Development Environment Configuration](./d
 
 - [Architecture Documentation](./docs/architecture.md)
 - [API Documentation](./docs/api.md)
-- [User Guide](./docs/user-guide.md)
-- [Development Workflow](./docs/development-workflow.md)
+- [Dev Guide](./docs/dev-guide.md)
+- [Development Workflow](./docs/project-board.md)
 - [Testing Strategy](./docs/testing.md)
 
 ## Contributing
 
-Please read our [Contributing Guidelines](./CONTRIBUTING.md) before submitting pull requests.
-
-## Project Roadmap
-
-See our [Project Board](https://github.com/your-organization/food-service-app/projects/1) for the current development status and upcoming features.
+Please read our [Contributing Guidelines](./docs/contributing.md) before submitting pull requests.
 
 ## License
 
