@@ -1,0 +1,19 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus-server.${prometheus_namespace}.svc.cluster.local
+    isDefault: true
+    version: 1
+    editable: false
+
+  - name: CloudWatch
+    type: cloudwatch
+    access: proxy
+    jsonData:
+      authType: default
+      defaultRegion: ${aws_region}
+    version: 1
+    editable: false
