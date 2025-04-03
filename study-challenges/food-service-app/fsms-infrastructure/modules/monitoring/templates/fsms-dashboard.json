@@ -1,0 +1,316 @@
+{
+  "widgets": [
+    {
+      "type": "text",
+      "x": 0,
+      "y": 0,
+      "width": 24,
+      "height": 1,
+      "properties": {
+        "markdown": "# Food Service Management System - ${environment} Environment"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 1,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "AWS/EKS", "cluster_node_count", "ClusterName", "${eks_cluster_name}" ]
+        ],
+        "region": "${aws_region}",
+        "title": "EKS Cluster Node Count",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 1,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "ContainerInsights", "pod_cpu_utilization", "ClusterName", "${eks_cluster_name}", "PodName", "fsms-auth-service", { "id": "m1" } ],
+          [ "...", "fsms-order-service", { "id": "m2" } ],
+          [ "...", "fsms-inventory-service", { "id": "m3" } ],
+          [ "...", "fsms-payment-service", { "id": "m4" } ],
+          [ "...", "fsms-analytics-service", { "id": "m5" } ],
+          [ "...", "fsms-notification-service", { "id": "m6" } ]
+        ],
+        "region": "${aws_region}",
+        "title": "Microservices CPU Utilization",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 7,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "ContainerInsights", "pod_memory_utilization", "ClusterName", "${eks_cluster_name}", "PodName", "fsms-auth-service", { "id": "m1" } ],
+          [ "...", "fsms-order-service", { "id": "m2" } ],
+          [ "...", "fsms-inventory-service", { "id": "m3" } ],
+          [ "...", "fsms-payment-service", { "id": "m4" } ],
+          [ "...", "fsms-analytics-service", { "id": "m5" } ],
+          [ "...", "fsms-notification-service", { "id": "m6" } ]
+        ],
+        "region": "${aws_region}",
+        "title": "Microservices Memory Utilization",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 7,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "AWS/ApplicationELB", "RequestCount", "LoadBalancer", "all" ]
+        ],
+        "region": "${aws_region}",
+        "title": "Load Balancer Request Count",
+        "period": 300
+      }
+    },
+    {
+      "type": "text",
+      "x": 0,
+      "y": 13,
+      "width": 24,
+      "height": 1,
+      "properties": {
+        "markdown": "## Database Metrics"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 14,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", "${rds_instance_id}" ]
+        ],
+        "region": "${aws_region}",
+        "title": "RDS CPU Utilization",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 8,
+      "y": 14,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "AWS/RDS", "FreeableMemory", "DBInstanceIdentifier", "${rds_instance_id}" ]
+        ],
+        "region": "${aws_region}",
+        "title": "RDS Freeable Memory",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 16,
+      "y": 14,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "AWS/RDS", "DatabaseConnections", "DBInstanceIdentifier", "${rds_instance_id}" ]
+        ],
+        "region": "${aws_region}",
+        "title": "RDS Connections",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 20,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "AWS/DocDB", "CPUUtilization", "DBClusterIdentifier", "${docdb_cluster_id}" ]
+        ],
+        "region": "${aws_region}",
+        "title": "DocumentDB CPU Utilization",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 8,
+      "y": 20,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "AWS/DocDB", "FreeableMemory", "DBClusterIdentifier", "${docdb_cluster_id}" ]
+        ],
+        "region": "${aws_region}",
+        "title": "DocumentDB Freeable Memory",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 16,
+      "y": 20,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "AWS/DocDB", "DatabaseConnections", "DBClusterIdentifier", "${docdb_cluster_id}" ]
+        ],
+        "region": "${aws_region}",
+        "title": "DocumentDB Connections",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 26,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "AWS/ElastiCache", "CPUUtilization", "CacheClusterId", "${elasticache_cluster_id}" ]
+        ],
+        "region": "${aws_region}",
+        "title": "Redis CPU Utilization",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 8,
+      "y": 26,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "AWS/ElastiCache", "FreeableMemory", "CacheClusterId", "${elasticache_cluster_id}" ]
+        ],
+        "region": "${aws_region}",
+        "title": "Redis Freeable Memory",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 16,
+      "y": 26,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "AWS/ElastiCache", "CurrConnections", "CacheClusterId", "${elasticache_cluster_id}" ]
+        ],
+        "region": "${aws_region}",
+        "title": "Redis Connections",
+        "period": 300
+      }
+    },
+    {
+      "type": "text",
+      "x": 0,
+      "y": 32,
+      "width": 24,
+      "height": 1,
+      "properties": {
+        "markdown": "## Messaging Metrics"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 33,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "AWS/AmazonMQ", "CpuUtilization", "Broker", "${rabbitmq_broker_id}" ]
+        ],
+        "region": "${aws_region}",
+        "title": "RabbitMQ CPU Utilization",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 8,
+      "y": 33,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "AWS/AmazonMQ", "HeapUsage", "Broker", "${rabbitmq_broker_id}" ]
+        ],
+        "region": "${aws_region}",
+        "title": "RabbitMQ Heap Usage",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 16,
+      "y": 33,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "view": "timeSeries",
+        "stacked": false,
+        "metrics": [
+          [ "AWS/AmazonMQ", "TotalMessageCount", "Broker", "${rabbitmq_broker_id}" ]
+        ],
+        "region": "${aws_region}",
+        "title": "RabbitMQ Message Count",
+        "period": 300
+      }
+    }
+  ]
+}
