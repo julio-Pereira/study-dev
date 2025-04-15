@@ -1,0 +1,22 @@
+# Common configurations
+spring:
+  application:
+    name: transaction-storage-service
+  profiles:
+    active: ${APP_ENV:dev}
+
+# Server configuration
+server:
+  port: ${SERVER_PORT:8083}
+  servlet:
+    context-path: /
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
