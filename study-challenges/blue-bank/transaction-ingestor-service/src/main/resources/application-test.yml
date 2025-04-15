@@ -1,0 +1,16 @@
+# Test environment configuration
+
+spring:
+  cloud:
+    gcp:
+      pubsub:
+        enabled: false # Use mockito for tests
+
+  # Database configuration is not needed for this service
+
+# Logging
+logging:
+  level:
+    root: WARN
+    com.bluebank: DEBUG
+    org.springframework.web: INFO

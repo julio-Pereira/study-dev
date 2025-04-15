@@ -1,0 +1,29 @@
+# Test environment configuration
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: false
+
+  # MongoDB in-memory configuration (using Fongo/MongoDB Embedded)
+  mongodb:
+    embedded:
+      version: 4.0.2
+
+# Logging
+logging:
+  level:
+    root: WARN
+    com.bluebank: DEBUG
+    org.springframework.data: INFO

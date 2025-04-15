@@ -1,0 +1,27 @@
+# Development environment configuration
+
+spring:
+  cloud:
+    gcp:
+      pubsub:
+        enabled: false # Use the emulator instead
+
+# Local PubSub emulator configuration
+pubsub:
+  emulator:
+    enabled: true
+    host: localhost:8085
+  transaction:
+    topic: transactions
+    projectId: dev-project
+
+# Database configuration is not needed for this service
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.bluebank: DEBUG
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
