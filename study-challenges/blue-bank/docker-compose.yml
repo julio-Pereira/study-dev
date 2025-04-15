@@ -1,0 +1,166 @@
+version: '3.8'
+
+networks:
+  financial-network:
+    driver: bridge
+
+services:
+  # Databases
+  postgres:
+    image: postgres:16-alpine
+    container_name: financial-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bluebank}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bluebank}
+      POSTGRES_DB: ${POSTGRES_DB:-transactions}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker-init/postgres:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bluebank}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - financial-network
+
+  mongodb:
+    image: mongo:7
+    container_name: financial-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-bluebank}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-bluebank}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-analytics}
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./docker-init/mongodb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/analytics -u ${MONGO_USER:-bluebank} -p ${MONGO_PASSWORD:-bluebank} --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    networks:
+      - financial-network
+
+  # PubSub Emulator
+  pubsub-emulator:
+    image: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+    container_name: financial-pubsub
+    entrypoint: gcloud beta emulators pubsub start --host-port=0.0.0.0:8085 --project=${PUBSUB_PROJECT_ID:-dev-project}
+    ports:
+      - "${PUBSUB_PORT:-8085}:8085"
+    networks:
+      - financial-network
+
+  # PubSub UI for easier development
+  pubsub-ui:
+    image: theskyinflames/pubsub-emulator-ui:latest
+    container_name: financial-pubsub-ui
+    environment:
+      - PUBSUB_EMULATOR_HOST=pubsub-emulator:8085
+    ports:
+      - "${PUBSUB_UI_PORT:-8086}:8080"
+    depends_on:
+      - pubsub-emulator
+    networks:
+      - financial-network
+
+  # ELK Stack for logging
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.1
+    container_name: financial-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
+      - ELASTIC_USERNAME=${ELASTIC_USERNAME:-elastic}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-elastic}
+    ports:
+      - "${ELASTIC_PORT:-9200}:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -u ${ELASTIC_USERNAME:-elastic}:${ELASTIC_PASSWORD:-elastic} http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"\\|\"status\":\"yellow\"'"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    networks:
+      - financial-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.1
+    container_name: financial-kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=${ELASTIC_USERNAME:-elastic}
+      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD:-elastic}
+    ports:
+      - "${KIBANA_PORT:-5601}:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - financial-network
+
+  # Monitoring tools
+  prometheus:
+    image: prom/prometheus:v2.49.1
+    container_name: financial-prometheus
+    volumes:
+      - ./docker-config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - financial-network
+
+  grafana:
+    image: grafana/grafana:10.2.3
+    container_name: financial-grafana
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker-config/grafana/provisioning:/etc/grafana/provisioning
+      - ./docker-config/grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    depends_on:
+      - prometheus
+    networks:
+      - financial-network
+
+  # Service for viewing distributed logs and traces
+  jaeger:
+    image: jaegertracing/all-in-one:1.55
+    container_name: financial-jaeger
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686"  # Web UI
+      - "14250:14250"  # Model used by jaeger
+      - "4317:4317"    # OTLP gRPC
+      - "4318:4318"    # OTLP HTTP
+      - "9411:9411"    # Zipkin compatible endpoint
+    networks:
+      - financial-network
+
+volumes:
+  postgres_data:
+  mongo_data:
+  es_data:
+  prometheus_data:
+  grafana_data:
