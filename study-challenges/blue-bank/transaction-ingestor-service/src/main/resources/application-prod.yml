@@ -1,0 +1,42 @@
+# Production environment configuration
+
+spring:
+  cloud:
+    gcp:
+      pubsub:
+        enabled: true
+        project-id: ${GCP_PROJECT_ID}
+        credentials:
+          location: ${GCP_CREDENTIALS_LOCATION}
+
+pubsub:
+  emulator:
+    enabled: false
+  transaction:
+    topic: ${PUBSUB_TRANSACTION_TOPIC}
+    projectId: ${GCP_PROJECT_ID}
+
+# Metrics
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: never
+    prometheus:
+      enabled: true
+
+# Logging
+logging:
+  level:
+    root: WARN
+    com.bluebank: INFO
+    org.springframework.web: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
