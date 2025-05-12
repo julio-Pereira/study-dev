@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.io.IOException;
 
@@ -25,11 +26,8 @@ public class PubSubConfig {
     @Value("${pubsub.emulator.host:localhost:8085}")
     private String emulatorHost;
 
-    /**
-     * Creates a Publisher instance for the transaction topic.
-     * If using the emulator, it sets the appropriate environment variable.
-     */
     @Bean
+    @Profile("!test")
     public Publisher transactionPublisher() throws IOException {
         if (emulatorEnabled) {
             log.info("Using PubSub emulator at host: {}", emulatorHost);
@@ -44,5 +42,15 @@ public class PubSubConfig {
         log.info("Creating publisher for topic: {}", topicName);
 
         return Publisher.newBuilder(topicName).build();
+    }
+
+    /**
+     * Creates a mock Publisher for testing.
+     */
+    @Bean
+    @Profile("test")
+    public Publisher mockTransactionPublisher() throws IOException {
+        log.info("Creating mock publisher for testing");
+        return null;
     }
 }
