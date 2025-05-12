@@ -1,37 +1,55 @@
-server:
-  port: 8081
-  servlet:
-    context-path: /
-
+# Common configurations
 spring:
   application:
     name: transaction-ingestor-service
   profiles:
-    active: dev
-  cloud:
-    gcp:
-      project-id: ${GCP_PROJECT_ID:local-dev-project}
-      pubsub:
+    active: ${APP_ENV:dev}
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+        add-mappings: false
+
+# Server configuration
+server:
+  port: ${SERVER_PORT:8081}
+  servlet:
+    context-path: /
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# Actuator
+management:
+  endpoints:
+      web:
+        exposure:
+          include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
         enabled: true
+    metrics:
+      tags:
+        applications: ${spring.application.name}
+
+# Logging
+logging:
+  pattern:
+      console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 # Default configuration for local development
 pubsub:
   transaction:
     topic: ${PUBSUB_TRANSACTION_TOPIC:transactions}
     emulator-host: ${PUBSUB_EMULATOR_HOST:localhost:8085}
-
-# Actuator configuration
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: always
-  health:
-    defaults:
-      enabled: true
 
 # OpenAPI Documentation
 springdoc:
@@ -41,3 +59,7 @@ springdoc:
     path: /swagger-ui.html
     operationsSorter: method
   packages-to-scan: com.bluebank.ingestor.controller
+
+rate-limit:
+  transactions-per-minute: ${RATE_LIMIT_TPM:60}
+  window-seconds: ${RATE_LIMIT_WINDOW_SECONDS:60}

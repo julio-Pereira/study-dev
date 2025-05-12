@@ -1,27 +1,60 @@
 # Development environment configuration
 
 spring:
+  # Database configuration
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:transactions}
+    username: ${DB_USERNAME:bluebank}
+    password: ${DB_PASSWORD:bluebank}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 10
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        show_sql: true
+        jdbc:
+          batch_size: 50
+          batch_versioned_data: true
+        order_inserts: true
+        order_updates: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  # Caching configuration
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=300s
+
+  # Google Cloud PubSub configuration
   cloud:
     gcp:
       pubsub:
-        enabled: false # Use the emulator instead
+        enabled: false
 
-# Local PubSub emulator configuration
+# PubSub local emulator configuration
 pubsub:
   emulator:
     enabled: true
-    host: localhost:8085
+    host: ${PUBSUB_HOST:localhost}:${PUBSUB_PORT:8085}
   transaction:
-    topic: transactions
-    projectId: dev-project
-
-# Database configuration is not needed for this service
+    topic: ${PUBSUB_TRANSACTION_TOPIC:transactions}
+    projectId: ${PUBSUB_PROJECT_ID:dev-project}
 
 # Logging
 logging:
   level:
     root: INFO
-    com.bluebank: DEBUG
-    org.springframework.web: INFO
-  pattern:
-    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    com.bankbv: DEBUG
+    org.springframework.jdbc.core: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
