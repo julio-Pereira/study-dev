@@ -35,7 +35,7 @@ public class TransactionAuditJdbcRepository {
                 "merchant_category, transaction_timestamp, pubsub_message_id, status, error_message) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        int[] rows = jdbcTemplate.batchUpdate(
+        int[][] rows = jdbcTemplate.batchUpdate(
                 sql,
                 audits,
                 audits.size(),
@@ -54,8 +54,9 @@ public class TransactionAuditJdbcRepository {
                 });
 
         int totalInserted = 0;
-        for (int count : rows) {
-            totalInserted += count;
+
+        for (int[] row : rows) {
+            totalInserted += row[0];
         }
 
         log.debug("Batch saved {} transaction audits", totalInserted);
