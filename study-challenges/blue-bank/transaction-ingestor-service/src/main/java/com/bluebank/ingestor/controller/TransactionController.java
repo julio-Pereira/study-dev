@@ -2,6 +2,7 @@ package com.bluebank.ingestor.controller;
 
 import com.bluebank.common.dto.TransactionRequest;
 import com.bluebank.common.dto.TransactionResponse;
+import com.bluebank.ingestor.service.TransactionService;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
