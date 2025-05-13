@@ -2,6 +2,7 @@ package com.bluebank.ingestor.service;
 
 import com.bluebank.common.dto.TransactionRequest;
 import com.bluebank.common.dto.TransactionResponse;
+import com.bluebank.common.exception.ValidationException;
 import com.bluebank.common.model.TransactionStatus;
 import com.bluebank.ingestor.entity.TransactionAudit;
 import com.bluebank.ingestor.repository.TransactionAuditJdbcRepository;
